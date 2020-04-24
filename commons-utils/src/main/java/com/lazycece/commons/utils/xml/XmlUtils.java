@@ -14,8 +14,8 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 
 /**
- * @author CC
- * 2018.04.06
+ * @author lazycece
+ * @date 2018/4/6
  */
 public class XmlUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlUtils.class);

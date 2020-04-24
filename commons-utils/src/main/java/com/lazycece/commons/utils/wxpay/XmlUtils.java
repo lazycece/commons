@@ -20,7 +20,7 @@ import java.util.Map;
 
 /**
  * @author lazycece
- * 2018.03.28
+ * @date 2018/3/28
  */
 public class XmlUtils {
 

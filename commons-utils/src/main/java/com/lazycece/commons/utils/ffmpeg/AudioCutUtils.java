@@ -18,6 +18,8 @@ public class AudioCutUtils {
     public static final String SUFFIX = ".mp3";
     private static final String FFMPEG_DMD = "E:\\ffmpeg\\bin\\ffmpeg.exe";
 
+
+
     /**
      * example as follow:
      * <p>
@@ -35,7 +37,9 @@ public class AudioCutUtils {
         String beginStr = timeFormat(begin);
         String cmd = FFMPEG_DMD
                 + " -ss " + beginStr + " -t " + offset
-                + " -i " + in + " -acodec libmp3lame -ac 1 " + out;
+//                + " -i " + in + " -acodec libmp3lame -ac 1 " + out;
+                + " -i " + in + " " + out;
+
         return exec(cmd);
     }
 

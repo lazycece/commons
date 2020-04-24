@@ -1,8 +1,8 @@
 package com.lazycece.commons.utils.xml;
 
 /**
- * @author CC
- * 2018.04.06
+ * @author lazycece
+ * @date 2018/4/6
  */
 public class Attribute {
     private String name;

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author CC
- * 2018.04.06
+ * @author lazycece
+ * @date 2018/4/6
  */
 public class ElementNode {
 

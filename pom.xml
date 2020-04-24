@@ -33,7 +33,7 @@
     </developers>
 
     <modules>
-        <module>commons-validator</module>
+        <module>commons-validation</module>
         <module>commons-utils</module>
         <module>commons-restful</module>
     </modules>

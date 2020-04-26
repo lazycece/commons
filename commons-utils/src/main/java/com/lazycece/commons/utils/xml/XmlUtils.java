@@ -1,113 +1,86 @@
 package com.lazycece.commons.utils.xml;
 
-import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.util.List;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author lazycece
- * @date 2018/4/6
+ * @date 2018/3/28
  */
 public class XmlUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(XmlUtils.class);
 
     /**
-     * write writexml file according to the <obj>elementNode</obj>
-     * @see ElementNode
+     * xml string to map
      *
-     * @param elementNode  writexml content
-     * @param filePath file path for save
+     * @param xmlStr xml string
+     * @return map
      * @throws Exception
      */
-    public static void writeXml(ElementNode elementNode, String filePath) throws Exception {
+    public static Map<String, String> xmlToMap(String xmlStr) throws Exception {
+        Map<String, String> data = new HashMap<String, String>();
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
+        org.w3c.dom.Document doc = documentBuilder.parse(stream);
+        doc.getDocumentElement().normalize();
+        NodeList nodeList = doc.getDocumentElement().getChildNodes();
+        for (int idx = 0; idx < nodeList.getLength(); ++idx) {
+            Node node = nodeList.item(idx);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                org.w3c.dom.Element element = (org.w3c.dom.Element) node;
+                data.put(element.getNodeName(), element.getTextContent());
+            }
+        }
+        stream.close();
+        return data;
+    }
 
-        Document document = createDocumentTree(elementNode);
-
-        LOGGER.info("begin write writexml");
-        FileOutputStream fos = new FileOutputStream(filePath);
-        OutputStreamWriter osw = new OutputStreamWriter(fos, "utf-8");
-        OutputFormat of = new OutputFormat();
-        of.setEncoding("utf-8");
-        of.setIndent(true);
-        of.setIndent("  ");
-        of.setNewlines(true);
-        XMLWriter writer = new XMLWriter(osw, of);
-        writer.write(document);
+    /**
+     * map to xml string
+     *
+     * @param data map
+     * @return xml string
+     * @throws Exception
+     */
+    public static String mapToXml(Map<String, String> data) throws Exception {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        org.w3c.dom.Document document = documentBuilder.newDocument();
+        org.w3c.dom.Element root = document.createElement("xml");
+        document.appendChild(root);
+        for (String key : data.keySet()) {
+            String value = data.get(key);
+            if (value == null) {
+                value = "";
+            }
+            value = value.trim();
+            org.w3c.dom.Element filed = document.createElement(key);
+            filed.appendChild(document.createTextNode(value));
+            root.appendChild(filed);
+        }
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        DOMSource source = new DOMSource(document);
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        StringWriter writer = new StringWriter();
+        StreamResult result = new StreamResult(writer);
+        transformer.transform(source, result);
+        String output = writer.getBuffer().toString(); //.replaceAll("\n|\r", "");
         writer.close();
-        LOGGER.info("end write writexml");
-    }
-
-    private static Document createDocumentTree(ElementNode elementNode) {
-        LOGGER.info("create document begin");
-        Document document = DocumentHelper.createDocument();
-        document.setXMLEncoding("utf-8");
-        if (elementNode == null) {
-            LOGGER.error("null elementNode");
-            throw new XmlIOException("null elementNode");
-        }
-        if (StringUtils.isBlank(elementNode.getName())) {
-            LOGGER.error("root node label name is null");
-            throw new XmlIOException("root node label name is null");
-        }
-        Element root = document.addElement(elementNode.getName());
-        addNameSpace(root, elementNode.getNameSpaces());
-        addAttribute(root, elementNode.getAttributes());
-        addText(root, elementNode.getValue());
-        addCDATA(root, elementNode.getcData());
-        addChildren(root, elementNode.getChildren());
-        LOGGER.info("create document end");
-        return document;
-    }
-
-    private static void addNameSpace(Element element, List<NameSpace> nameSpaces) {
-        for (NameSpace nameSpace : nameSpaces) {
-            if (StringUtils.isNotBlank(nameSpace.getName())) {
-                element.addNamespace(nameSpace.getName(), nameSpace.getValue());
-            }
-        }
-    }
-
-    private static void addAttribute(Element element, List<Attribute> attributes) {
-        for (Attribute attribute : attributes) {
-            if (StringUtils.isNotBlank(attribute.getName())) {
-                element.addAttribute(attribute.getName(), attribute.getValue());
-            }
-        }
-    }
-
-    private static void addText(Element element, String text) {
-        if (StringUtils.isNotBlank(text)) {
-            element.addText(text);
-        }
-    }
-
-    private static void addCDATA(Element element, String data) {
-        if (StringUtils.isNotBlank(data)) {
-            element.addCDATA(data);
-        }
-    }
-
-    private static void addChildren(Element element, List<ElementNode> children) {
-        for (ElementNode elementNode : children) {
-            if (StringUtils.isBlank(elementNode.getName())) {
-                LOGGER.error("node label name is null");
-                throw new XmlIOException("node label name is null");
-            }
-            Element child = element.addElement(elementNode.getName());
-            addNameSpace(child, elementNode.getNameSpaces());
-            addAttribute(child, elementNode.getAttributes());
-            addText(child, elementNode.getValue());
-            addCDATA(child, elementNode.getcData());
-            addChildren(child, elementNode.getChildren());
-        }
+        return output;
     }
 }

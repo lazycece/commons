@@ -1,4 +1,4 @@
-package com.lazycece.commons.utils.ffmpeg;
+package com.lazycece.commons.utils.ffmp;
 
 import com.lazycece.commons.utils.cmd.CmdExecUtils;
 

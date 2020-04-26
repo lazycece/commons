@@ -1,4 +1,4 @@
-package com.lazycece.commons.utils.xml;
+package com.lazycece.commons.utils.xmlc;
 
 import java.util.ArrayList;
 import java.util.List;

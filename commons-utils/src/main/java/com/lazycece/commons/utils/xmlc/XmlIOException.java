@@ -1,4 +1,4 @@
-package com.lazycece.commons.utils.xml;
+package com.lazycece.commons.utils.xmlc;
 
 /**
  * @author lazycece

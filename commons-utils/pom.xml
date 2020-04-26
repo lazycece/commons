@@ -15,7 +15,7 @@
     <properties>
         <fastjson.version>1.2.61</fastjson.version>
         <dozer.version>6.2.0</dozer.version>
-        <poi.version>4.1.1</poi.version>
+        <poi-excelant.version>4.1.1</poi-excelant.version>
         <dom4j.version>2.1.0</dom4j.version>
         <xstream.version>1.4.10</xstream.version>
         <commons-lang3.version>3.9</commons-lang3.version>
@@ -45,7 +45,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-excelant</artifactId>
-            <version>${poi.version}</version>
+            <version>${poi-excelant.version}</version>
         </dependency>
         <dependency>
             <groupId>org.dom4j</groupId>

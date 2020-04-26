@@ -1,8 +1,6 @@
 package com.lazycece.commons.utils.ffmpeg;
 
 import com.lazycece.commons.utils.cmd.CmdExecUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -15,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 public class AudioCutUtils {
 
     private static final AudioCutUtils AUDIO_CUT_UTILS = new AudioCutUtils();
-    private static final Logger LOGGER = LoggerFactory.getLogger(AudioCutUtils.class);
     private static String FFMPEG_DMD;
 
     public static AudioCutUtils getInstance(String ffmpegPath) {

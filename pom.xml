@@ -35,6 +35,7 @@
     <modules>
         <module>commons-validation</module>
         <module>commons-utils</module>
+        <module>commons-restful</module>
     </modules>
 
     <properties>

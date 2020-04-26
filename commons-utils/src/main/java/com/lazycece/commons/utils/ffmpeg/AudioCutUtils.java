@@ -13,40 +13,41 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class AudioCutUtils {
+
+    private static final AudioCutUtils AUDIO_CUT_UTILS = new AudioCutUtils();
     private static final Logger LOGGER = LoggerFactory.getLogger(AudioCutUtils.class);
-    public static final int DURATION_LIMIT_SECOND = 20 * 60;
-    public static final String SUFFIX = ".mp3";
-    private static final String FFMPEG_DMD = "E:\\ffmpeg\\bin\\ffmpeg.exe";
+    private static String FFMPEG_DMD;
 
-
+    public static AudioCutUtils getInstance(String ffmpegPath) {
+        FFMPEG_DMD = ffmpegPath;
+        return AUDIO_CUT_UTILS;
+    }
 
     /**
-     * example as follow:
-     * <p>
-     * E:\ffmpeg\bin\ffmpeg.exe -ss 00:00:00 -t 00:00:30 -i ${in_audio_path} -acodec copy ${out_audio_path}
+     * Cut audio by time(second), and cmd as follow:
+     * ${ffmpeg_path} -ss 00:00:00 -t 00:00:30 -i ${in_audio_path} -acodec copy ${out_audio_path}
      *
      * @param in    input audio path
      * @param out   output audio path
      * @param begin begin time
+     * @param end   end time
      * @return success(true) or not
      * @throws IOException          IOException
      * @throws InterruptedException InterruptedException
      */
-    public static boolean cut(String in, String out, int begin) throws IOException, InterruptedException {
-        String offset = timeFormat(DURATION_LIMIT_SECOND / 2);
+    public static boolean cut(String in, String out, int begin, int end) throws IOException, InterruptedException {
+        String offset = timeFormat(end);
         String beginStr = timeFormat(begin);
         String cmd = FFMPEG_DMD
                 + " -ss " + beginStr + " -t " + offset
 //                + " -i " + in + " -acodec libmp3lame -ac 1 " + out;
                 + " -i " + in + " " + out;
-
-        return exec(cmd);
+        return CmdExecUtils.execSuc(cmd);
     }
 
     /**
-     * example as follow:
-     * <p>
-     * E:\ffmpeg\bin\ffmpeg.exe -i "concat:${in1_audio_path}|${in2_audio_path}" -acodec copy ${out_audio_path}
+     * Concat audio, and cmd as follow:
+     * ${ffmpeg_path} -i "concat:${in1_audio_path}|${in2_audio_path}" -acodec copy ${out_audio_path}
      *
      * @param in1  input-1 audio path
      * @param int2 input-2 audio path
@@ -57,23 +58,7 @@ public class AudioCutUtils {
      */
     public static boolean concat(String in1, String int2, String out) throws IOException, InterruptedException {
         String cmd = FFMPEG_DMD + " -i concat:" + in1 + "|" + int2 + " -acodec copy " + out;
-
-        return exec(cmd);
-    }
-
-    private static boolean exec(String cmd) throws IOException, InterruptedException {
-        Process process = null;
-        try {
-            process = CmdExecUtils.exec(cmd, 5, TimeUnit.MINUTES);
-            int value = process.exitValue();
-            LOGGER.info("exec result is {}", value);
-            process.destroy();
-            return value == 0;
-        } finally {
-            if (process != null) {
-                process.destroy();
-            }
-        }
+        return CmdExecUtils.execSuc(cmd, 5, TimeUnit.MINUTES);
     }
 
     private static String timeFormat(int second) {

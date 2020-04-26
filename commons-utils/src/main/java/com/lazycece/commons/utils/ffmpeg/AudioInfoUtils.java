@@ -12,21 +12,45 @@ import java.util.concurrent.TimeUnit;
  * @date 2020/2/6
  */
 public class AudioInfoUtils {
-    public static final AudioInfoUtils AUDIO_INFO_UTILS = new AudioInfoUtils();
-    private static final String CMD_PARAMS = " -v quiet -print_format json -show_format -show_streams ";
-    private static String FFPROBE_PATH = "";
 
-    public static String getAudioInfo(String file) throws IOException, InterruptedException {
-        String cmd = FFPROBE_PATH + CMD_PARAMS + file;
+    private static final AudioInfoUtils AUDIO_INFO_UTILS = new AudioInfoUtils();
+    private static final String CMD_PARAMS = " -v quiet -print_format json -show_format -show_streams ";
+    private static String FFPROBE_CMD;
+
+    public static AudioInfoUtils getInstance(String ffprobePath) {
+        FFPROBE_CMD = ffprobePath;
+        return AUDIO_INFO_UTILS;
+    }
+
+    /**
+     * Get audio's information, it will be blocked
+     *
+     * @param file audio file path
+     * @return audio's information as json
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public String getAudioInfo(String file) throws IOException, InterruptedException {
+        String cmd = FFPROBE_CMD + CMD_PARAMS + file;
         return execResult(cmd, -1, null);
     }
 
-    public static String getAudioInfo(String file, long timeout, TimeUnit unit) throws IOException, InterruptedException {
-        String cmd = FFPROBE_PATH + CMD_PARAMS + file;
+    /**
+     * Get audio's information
+     *
+     * @param file    audio file path
+     * @param timeout timeout
+     * @param unit    unit
+     * @return audio's information as json
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public String getAudioInfo(String file, long timeout, TimeUnit unit) throws IOException, InterruptedException {
+        String cmd = FFPROBE_CMD + CMD_PARAMS + file;
         return execResult(cmd, timeout, unit);
     }
 
-    private static String execResult(String cmd, long timeout, TimeUnit unit) throws IOException, InterruptedException {
+    private String execResult(String cmd, long timeout, TimeUnit unit) throws IOException, InterruptedException {
         Process process = null;
         try {
             process = CmdExecUtils.exec(cmd, timeout, unit);

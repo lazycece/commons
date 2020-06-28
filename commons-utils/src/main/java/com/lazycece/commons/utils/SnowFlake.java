@@ -1,15 +1,14 @@
 package com.lazycece.commons.utils;
 
 /**
- * 0   00000000 00000000 00000000 00000000 00000000 0  0000000000 000000000000
- * |   |------------------41------------------------|  |--10----| |----12----|
- * |----------------------------64-------------------------------------------|
+ * 0   00000000 00000000 00000000 00000000 00000000 0   0000000000   000000000000
+ * |   |----------时间戳 41 bit----------------------|   |--10----|   |----12----|
+ * |-------------------------------64-------------------------------------------|
  *
  * @author lazycece
  * @date 2020/6/28
  */
 public class SnowFlake {
-
     /**
      * 起始的时间戳
      */
@@ -88,19 +87,15 @@ public class SnowFlake {
     }
 
     private long getNextTimeMillis() {
-        long mill = System.currentTimeMillis();
-        while (mill <= lastTime) {
-            mill = System.currentTimeMillis();
+        long time = System.currentTimeMillis();
+        while (time <= lastTime) {
+            time = System.currentTimeMillis();
         }
-        return mill;
+        return time;
     }
 
     public static void main(String[] args) {
         SnowFlake snowFlake = new SnowFlake(2, 3);
-
-        for (int i = 0; i < (1 << 12); i++) {
-            System.out.println(snowFlake.nextId());
-        }
-
+        System.out.println(snowFlake.nextId());
     }
 }

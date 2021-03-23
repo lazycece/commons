@@ -17,7 +17,7 @@
         <dozer.version>6.2.0</dozer.version>
         <poi-excelant.version>4.1.1</poi-excelant.version>
         <dom4j.version>2.1.3</dom4j.version>
-        <xstream.version>1.4.15</xstream.version>
+        <xstream.version>1.4.16</xstream.version>
         <commons-lang3.version>3.9</commons-lang3.version>
     </properties>
 
